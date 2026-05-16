@@ -3,11 +3,12 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:cvt="clr-namespace:OPCToS7.App.Converter"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    Title="OPC UA 转 S7-1511 智能网关控制台"
-    Width="1200"
-    Height="760"
-    Background="#F0F2F5"
+    Title="OPC UA 转 S7 智能网关控制台"
+    Width="1400"
+    Height="800"
+    Background="{DynamicResource SecondaryRegionBrush}"
     WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
@@ -16,6 +17,9 @@
 
         <cvt:VisibleIfVariableConverter x:Key="VisibleIfVariableConverter" />
         <cvt:VisibleIfObjectConverter x:Key="VisibleIfObjectConverter" />
+
+        <cvt:StatusColorConverter x:Key="StatusColorConverter" />
+        
     </Window.Resources>
 
     <Grid Margin="10">
@@ -24,12 +28,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Border
-            Grid.Row="0"
-            Margin="0,0,0,10"
-            Padding="15"
-            Background="White"
-            CornerRadius="6">
+        <hc:Card Grid.Row="0" Margin="0,0,0,15" Padding="15,10" Background="{DynamicResource RegionBrush}" BorderThickness="0" Effect="{DynamicResource EffectShadow2}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -38,77 +37,42 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                    <TextBlock
-                        Margin="0,0,5,0"
-                        FontWeight="Bold"
-                        Text="OPC UA:" />
-                    <Border
-                        Width="12"
-                        Height="12"
-                        Margin="0,0,15,0"
-                        Background="{Binding IsOpcConnected, Converter={StaticResource BooleanToBrushConverter}}"
-                        CornerRadius="6" />
+                    <Border Width="12" Height="12" Margin="0,0,8,0" CornerRadius="6" Background="{Binding IsOpcConnected, Converter={StaticResource BooleanToBrushConverter}}">
+                        <Border.Effect>
+                            <DropShadowEffect Color="LimeGreen" BlurRadius="8" ShadowDepth="0" Opacity="0.5"/>
+                        </Border.Effect>
+                    </Border>
+                    <TextBlock Text="OPC UA" FontWeight="Bold" FontSize="14" Margin="0,0,20,0" Foreground="{DynamicResource PrimaryTextBrush}" VerticalAlignment="Center"/>
 
-                    <TextBlock
-                        Margin="0,0,5,0"
-                        FontWeight="Bold"
-                        Text="S7-1511 PLC:" />
-                    <Border
-                        Width="12"
-                        Height="12"
-                        Margin="0,0,25,0"
-                        Background="{Binding IsS7Connected, Converter={StaticResource BooleanToBrushConverter}}"
-                        CornerRadius="6" />
+                    <Border Width="12" Height="12" Margin="0,0,8,0" CornerRadius="6" Background="{Binding IsS7Connected, Converter={StaticResource BooleanToBrushConverter}}">
+                        <Border.Effect>
+                            <DropShadowEffect Color="LimeGreen" BlurRadius="8" ShadowDepth="0" Opacity="0.5"/>
+                        </Border.Effect>
+                    </Border>
+                    <TextBlock Text="S7-1511" FontWeight="Bold" FontSize="14" Margin="0,0,20,0" Foreground="{DynamicResource PrimaryTextBrush}" VerticalAlignment="Center"/>
                 </StackPanel>
 
-                <StackPanel
-                    Grid.Column="1"
-                    VerticalAlignment="Center"
-                    Orientation="Horizontal">
-                    <TextBlock VerticalAlignment="Center" Text="目标PLC IP: " />
-                    <TextBox
-                        Width="120"
-                        Margin="0,0,15,0"
-                        Text="{Binding PlcConfig.IpAddress}" />
-                    <TextBlock VerticalAlignment="Center" Text="Rack: " />
-                    <TextBox
-                        Width="30"
-                        Margin="0,0,10,0"
-                        Text="{Binding PlcConfig.Rack}" />
-                    <TextBlock VerticalAlignment="Center" Text="Slot: " />
-                    <TextBox
-                        Width="30"
-                        Margin="0,0,15,0"
-                        Text="{Binding PlcConfig.Slot}" />
-                    <TextBlock VerticalAlignment="Center" Text="转发频率(ms): " />
-                    <TextBox Width="50" Text="{Binding PlcConfig.CycleTimeMs}" />
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center" Text="PLC IP:" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,0,5,0"/>
+                    <TextBox Width="120" Margin="0,0,15,0" hc:InfoElement.Placeholder="192.168.0.1" Text="{Binding PlcConfig.IpAddress}" />
+
+                    <TextBlock VerticalAlignment="Center" Text="Rack:" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,0,5,0"/>
+                    <TextBox Width="40" Margin="0,0,15,0" Text="{Binding PlcConfig.Rack}" />
+
+                    <TextBlock VerticalAlignment="Center" Text="Slot:" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,0,5,0"/>
+                    <TextBox Width="40" Margin="0,0,15,0" Text="{Binding PlcConfig.Slot}" />
+
+                    <TextBlock VerticalAlignment="Center" Text="微拍节(ms):" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,0,5,0"/>
+                    <TextBox Width="60" Text="{Binding PlcConfig.CycleTimeMs}" />
                 </StackPanel>
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
-                    <Button
-                        Width="120"
-                        Margin="0,0,10,0"
-                        Background="#28A745"
-                        Click="StartEngine_Click"
-                        Content="▶ 启动转发引擎"
-                        FontWeight="Bold"
-                        Foreground="White"
-                        IsEnabled="{Binding IsEngineRunning, Converter={StaticResource InverseBooleanConverter}}" />
-                    <Button
-                        Width="80"
-                        Margin="0,0,10,0"
-                        Background="#DC3545"
-                        Click="StopEngine_Click"
-                        Content="⏹ 停止"
-                        Foreground="White"
-                        IsEnabled="{Binding IsEngineRunning}" />
-                    <Button
-                        Width="90"
-                        Click="SaveConfig_Click"
-                        Content="💾 保存组态" />
+                    <Button Width="130" Margin="0,0,10,0" hc:BorderElement.CornerRadius="4" Background="#28A745" Foreground="White" FontWeight="Bold" Content="▶ 启动双擎" Click="StartEngine_Click" IsEnabled="{Binding IsEngineRunning, Converter={StaticResource InverseBooleanConverter}}" />
+                    <Button Width="90" Margin="0,0,10,0" hc:BorderElement.CornerRadius="4" Background="#DC3545" Foreground="White" Content="⏹ 停止" Click="StopEngine_Click" IsEnabled="{Binding IsEngineRunning}" />
+                    <Button Width="100" hc:BorderElement.CornerRadius="4" Style="{StaticResource ButtonPrimary}" Content="💾 固化组态" Click="SaveConfig_Click" />
                 </StackPanel>
             </Grid>
-        </Border>
+        </hc:Card>
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -117,11 +81,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Border
-                Grid.Column="0"
-                Padding="10"
-                Background="White"
-                CornerRadius="6">
+            <hc:Card Grid.Column="0" Padding="10" Background="{DynamicResource RegionBrush}" BorderThickness="0" Effect="{DynamicResource EffectShadow1}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -129,110 +89,47 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock
-                        Margin="0,0,0,10"
-                        FontWeight="Bold"
-                        Text="1. 数据源：OPC UA 节点浏览" />
+                    <TextBlock Margin="0,0,0,10" FontWeight="Black" FontSize="14" Foreground="{DynamicResource PrimaryBrush}" Text="▍ 第一步: OPC UA 节点探针" />
+
                     <Grid Grid.Row="1" Margin="0,0,0,10">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <TextBox
-                            Margin="0,0,5,0"
-                            VerticalContentAlignment="Center"
-                            Text="{Binding OpcConfig.ServerUrl}" />
+                        <TextBox Margin="0,0,5,0" VerticalContentAlignment="Center" Text="{Binding OpcConfig.ServerUrl}" hc:InfoElement.Placeholder="opc.tcp://..." />
 
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
-                            <Button
-                                Width="60"
-                                Margin="0,0,5,0"
-                                Background="#007ACC"
-                                Click="BrowseOpc_Click"
-                                Content="🔍扫描"
-                                Foreground="White" />
-                            <Button
-                                Width="75"
-                                Margin="0,0,5,0"
-                                Background="#28A745"
-                                Click="ExportCsv_Click"
-                                Content="⬇️导出CSV"
-                                Foreground="White"
-                                ToolTip="将左侧树形变量全部导出为CSV模板" />
-                            <Button
-                                Width="75"
-                                Background="#17A2B8"
-                                Click="ImportCsv_Click"
-                                Content="⬆️导入CSV"
-                                Foreground="White"
-                                ToolTip="读取CSV并自动生成S7映射表" />
+                            <Button Width="60" Margin="0,0,5,0" Style="{StaticResource ButtonPrimary}" Content="🔍扫描" Click="BrowseOpc_Click" />
+                            <Button Width="35" Margin="0,0,5,0" Background="#28A745" Foreground="White" Content="⬇️" ToolTip="导出当前树形CSV组态模板" Click="ExportCsv_Click" />
+                            <Button Width="35" Background="#17A2B8" Foreground="White" Content="⬆️" ToolTip="直接导入CSV物理地址映射表" Click="ImportCsv_Click" />
                         </StackPanel>
                     </Grid>
 
-                    <TreeView
-                        x:Name="OpcTreeView"
-                        Grid.Row="2"
-                        BorderBrush="#DDD"
-                        ItemsSource="{Binding OpcServerTree}"
-                        SelectedItemChanged="OpcTreeView_SelectedItemChanged">
-
+                    <TreeView x:Name="OpcTreeView" Grid.Row="2" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}" ItemsSource="{Binding OpcServerTree}" SelectedItemChanged="OpcTreeView_SelectedItemChanged">
                         <TreeView.ItemContainerStyle>
                             <Style TargetType="{x:Type TreeViewItem}">
                                 <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                                 <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                             </Style>
                         </TreeView.ItemContainerStyle>
-
                         <TreeView.ItemTemplate>
                             <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                                <StackPanel Margin="0,3" Orientation="Horizontal">
-                                    <TextBlock
-                                        Margin="0,0,5,0"
-                                        Foreground="#007ACC"
-                                        Text="🏷️"
-                                        Visibility="{Binding NodeClass, Converter={StaticResource VisibleIfVariableConverter}}" />
-                                    <TextBlock
-                                        Margin="0,0,5,0"
-                                        Foreground="#E1B32A"
-                                        Text="📁"
-                                        Visibility="{Binding NodeClass, Converter={StaticResource VisibleIfObjectConverter}}" />
-                                    <TextBlock FontWeight="SemiBold" Text="{Binding DisplayName}" />
-                                    <TextBlock
-                                        Margin="10,2,0,0"
-                                        VerticalAlignment="Bottom"
-                                        FontSize="10"
-                                        Foreground="Gray"
-                                        Text="{Binding NodeId}" />
+                                <StackPanel Margin="0,4" Orientation="Horizontal">
+                                    <TextBlock Margin="0,0,6,0" Foreground="#2196F3" Text="●" Visibility="{Binding NodeClass, Converter={StaticResource VisibleIfVariableConverter}}" />
+                                    <TextBlock Margin="0,0,6,0" Foreground="#FFC107" Text="📁" Visibility="{Binding NodeClass, Converter={StaticResource VisibleIfObjectConverter}}" />
+                                    <TextBlock FontWeight="SemiBold" FontSize="13" Text="{Binding DisplayName}" />
+                                    <TextBlock Margin="8,1,0,0" VerticalAlignment="Bottom" FontSize="11" Foreground="{DynamicResource ThirdTextBrush}" Text="{Binding NodeId}" />
                                 </StackPanel>
                             </HierarchicalDataTemplate>
                         </TreeView.ItemTemplate>
                     </TreeView>
                 </Grid>
-            </Border>
+            </hc:Card>
 
-            <StackPanel
-                Grid.Column="1"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-                <Button
-                    Width="50"
-                    Height="40"
-                    Margin="0,0,0,15"
-                    Background="#007ACC"
-                    Click="AddNode_Click"
-                    Content="▶ 添加"
-                    FontWeight="Bold"
-                    Foreground="White"
-                    ToolTip="将选中的变量添加到右侧映射表" />
-                <Button
-                    Width="50"
-                    Height="40"
-                    Background="#F8D7DA"
-                    Click="RemoveNode_Click"
-                    Content="🗑 删除"
-                    Foreground="#721C24"
-                    ToolTip="移除右侧选中的映射" />
+            <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button Width="40" Height="40" Margin="0,0,0,20" hc:BorderElement.CornerRadius="20" Style="{StaticResource ButtonPrimary}" Content="▶" FontSize="18" ToolTip="挂载选定节点" Click="AddNode_Click" />
+                <Button Width="40" Height="40" hc:BorderElement.CornerRadius="20" Style="{StaticResource ButtonDanger}" Content="🗑" FontSize="16" ToolTip="剥离映射节点" Click="RemoveNode_Click" />
             </StackPanel>
 
             <Grid Grid.Column="2">
@@ -241,77 +138,59 @@
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
 
-                <Border
-                    Grid.Row="0"
-                    Margin="0,0,0,10"
-                    Padding="10"
-                    Background="White"
-                    CornerRadius="6">
+                <hc:Card Grid.Row="0" Margin="0,0,0,15" Padding="10" Background="{DynamicResource RegionBrush}" BorderThickness="0" Effect="{DynamicResource EffectShadow1}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <TextBlock
-                            Margin="0,0,0,10"
-                            FontWeight="Bold"
-                            Text="2. 目标：西门子 DB 块偏移量路由映射表 (自动计算连续地址)" />
 
-                        <DataGrid
-                            x:Name="MapDataGrid"
-                            Grid.Row="1"
-                            AutoGenerateColumns="False"
-                            Background="White"
-                            CanUserAddRows="False"
-                            ItemsSource="{Binding TagMappings}"
-                            RowHeaderWidth="25"
-                            SelectionMode="Extended"
-                            SelectionUnit="FullRow">
+                        <TextBlock Margin="0,0,0,10" FontWeight="Black" FontSize="14" Foreground="{DynamicResource PrimaryBrush}" Text="▍ 第二步: S7 物理内存路由与双向状态监控表" />
+
+                        <DataGrid x:Name="MapDataGrid" Grid.Row="1" 
+                                  AutoGenerateColumns="False" 
+                                  CanUserAddRows="False"
+                                  RowHeaderWidth="40"
+                                  hc:DataGridAttach.ShowRowNumber="True"
+                                  AlternatingRowBackground="{DynamicResource SecondaryRegionBrush}"
+                                  ItemsSource="{Binding TagMappings}" 
+                                  SelectionMode="Extended" 
+                                  SelectionUnit="FullRow">
                             <DataGrid.Columns>
-                                <DataGridCheckBoxColumn
-                                    Width="40"
-                                    Binding="{Binding IsActive}"
-                                    Header="激活" />
-                                <DataGridTextColumn
-                                    Width="140"
-                                    Binding="{Binding TagName}"
-                                    Header="变量名称" />
-                                <DataGridTextColumn
-                                    Width="2*"
-                                    Binding="{Binding OpcNodeId}"
-                                    Header="OPC 节点 (NodeId)" />
+                                <DataGridTemplateColumn Header="使能" Width="*">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <ToggleButton Style="{StaticResource ToggleButtonSwitch}" IsChecked="{Binding IsActive, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
 
-                                <DataGridTextColumn
-                                    Width="100"
-                                    Binding="{Binding LinkStatus}"
-                                    Header="通讯状态">
+                                <DataGridTextColumn Header="工业变量名" Binding="{Binding TagName}" Width="*" FontWeight="Bold"/>
+                                <DataGridTextColumn Header="OPC 寻址 (NodeId)" Binding="{Binding OpcNodeId}" Width="2*" IsReadOnly="True" Foreground="{DynamicResource ThirdTextBrush}"/>
+
+                                <DataGridTextColumn Header="同步状态" Binding="{Binding LinkStatus}" Width="*" IsReadOnly="True">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style TargetType="TextBlock">
-                                            <Style.Triggers>
-                                                <Trigger Property="Text" Value="变量错误">
-                                                    <Setter Property="Foreground" Value="Red" />
-                                                    <Setter Property="FontWeight" Value="Bold" />
-                                                </Trigger>
-                                                <Trigger Property="Text" Value="正常">
-                                                    <Setter Property="Foreground" Value="Green" />
-                                                </Trigger>
-                                            </Style.Triggers>
+                                            <Setter Property="Foreground" Value="{Binding LinkStatus, Converter={StaticResource StatusColorConverter}}" />
+                                            <Setter Property="FontWeight" Value="Heavy" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
                                         </Style>
                                     </DataGridTextColumn.ElementStyle>
                                 </DataGridTextColumn>
 
-                                <DataGridTextColumn
-                                    Width="80"
-                                    Binding="{Binding CurrentValue}"
-                                    FontWeight="Bold"
-                                    Foreground="#007ACC"
-                                    Header="实时数据"
-                                    IsReadOnly="True" />
+                                <DataGridTextColumn Header="实时数据" Binding="{Binding CurrentValue}" Width="*" IsReadOnly="True">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontFamily" Value="Consolas" />
+                                            <Setter Property="FontSize" Value="15" />
+                                            <Setter Property="FontWeight" Value="Bold" />
+                                            <Setter Property="Foreground" Value="#00C853" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
 
-                                <DataGridComboBoxColumn
-                                    Width="80"
-                                    Header="数据类型"
-                                    SelectedValueBinding="{Binding DataType}">
+                                <DataGridComboBoxColumn Header="强类型" Width="*" SelectedValueBinding="{Binding DataType}">
                                     <DataGridComboBoxColumn.ItemsSource>
                                         <x:Array Type="{x:Type sys:String}">
                                             <sys:String>REAL</sys:String>
@@ -324,39 +203,20 @@
                                     </DataGridComboBoxColumn.ItemsSource>
                                 </DataGridComboBoxColumn>
 
-                                <DataGridTextColumn
-                                    Width="50"
-                                    Binding="{Binding DbNumber}"
-                                    Header="DB块" />
-                                <DataGridTextColumn
-                                    Width="50"
-                                    Binding="{Binding ByteOffset}"
-                                    Header="Byte" />
-                                <DataGridTextColumn
-                                    Width="40"
-                                    Binding="{Binding BitOffset}"
-                                    Header="Bit" />
+                                <DataGridTextColumn Header="DB块" Binding="{Binding DbNumber}" Width="*" Foreground="#007ACC" FontWeight="Bold"/>
+                                <DataGridTextColumn Header="Byte" Binding="{Binding ByteOffset}" Width="*" Foreground="#E65100"/>
+                                <DataGridTextColumn Header="Bit" Binding="{Binding BitOffset}" Width="*" Foreground="#607D8B"/>
                             </DataGrid.Columns>
                         </DataGrid>
                     </Grid>
-                </Border>
+                </hc:Card>
 
-                <Border
-                    Grid.Row="1"
-                    Padding="10"
-                    Background="#1E1E1E"
-                    CornerRadius="6">
-                    <TextBox
-                        Background="Transparent"
-                        BorderThickness="0"
-                        FontFamily="Consolas"
-                        FontSize="12"
-                        Foreground="#A9B7C6"
-                        IsReadOnly="True"
-                        Text="{Binding LogText, Mode=OneWay}"
-                        TextChanged="LogTextBox_TextChanged"
-                        VerticalScrollBarVisibility="Auto" />
-                </Border>
+                <hc:Card Grid.Row="1" Padding="10" Background="#0D1117" BorderThickness="0" hc:BorderElement.CornerRadius="6">
+                    <Grid>
+                        <TextBlock Text="Terminal Log" Foreground="#444" FontSize="20" FontWeight="Black" Margin="0,0,10,0" HorizontalAlignment="Right" VerticalAlignment="Top" Panel.ZIndex="0"/>
+                        <TextBox Background="Transparent" BorderThickness="0" FontFamily="Consolas" FontSize="13" Foreground="#10B981" IsReadOnly="True" Text="{Binding LogText, Mode=OneWay}" TextChanged="LogTextBox_TextChanged" VerticalScrollBarVisibility="Auto" Panel.ZIndex="1"/>
+                    </Grid>
+                </hc:Card>
             </Grid>
         </Grid>
     </Grid>
