@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="OPCToS7.App/OPCToS7.App.csproj" Id="b0ad5a63-05f0-4e02-9c0a-88c15286229c" />
+  <Project Path="OPCToS7.Core/OPCToS7.Core.csproj" Id="7c0f5bc0-c637-4784-93f2-79f452b4a470" />
+  <Project Path="OPCToS7.Storage/OPCToS7.Storage.csproj" Id="eb93c9e0-47d8-4e13-a28b-e8a2bd8f8fa0" />
+</Solution>
