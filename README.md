@@ -1,4 +1,4 @@
-readme_content = """# OPC UA ⇌ S7-1511 全双工工业智能网关 (OPCToS7 Gateway)
+OPC UA ⇌ S7-1511 全双工工业智能网关 (OPCToS7 Gateway)
 
 [![Platform](https://img.shields.io/badge/.NET-10.0-blue.svg)](https://dotnet.microsoft.com/)
 [![UI Framework](https://img.shields.io/badge/UI-HandyControl-purple.svg)](https://github.com/HandyOrg/HandyControl)
